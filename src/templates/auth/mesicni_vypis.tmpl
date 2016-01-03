@@ -1,0 +1,34 @@
+{% from "macros/fields.tmpl" import render_input_field, render_password_field, render_checkbox_field, render_submit %}
+{% extends "shared/layout.tmpl" %}
+{% block title %}Device{% endblock %}
+
+{% block content %}
+<h3>Mesicni vypis uzivatele {{ data.user }}, mesic {{ data.mounth }}, rok {{ data.year }}, cislo karty {{ data.card_number}}</h3>
+<style type="text/css">
+.tftable {font-size:12px;color:#333333;width:100%;border-width: 1px;border-color: #729ea5;border-collapse: collapse;}
+.tftable th {font-size:12px;background-color:#acc8cc;border-width: 1px;padding: 8px;border-style: solid;border-color: #729ea5;text-align:left;}
+.tftable tr {background-color:#ffffff;}
+.tftable td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #729ea5;}
+.tftable tr:hover {background-color:#ffff99;}
+</style>
+<table class="tftable" border="1">
+<tr><td>Den</td><td>Prichod</td><td>Odchod</td><td>Cas</td></tr>
+    {% for n in data.data %}
+        <tr>
+            <td>{{ n['day'] }}</td>
+            <td>{{ n['startdate'] }}</td>
+            <td>{{ n['enddate'] }}</td>
+            <td>{{ n['timespend'] }}</td>
+
+            {% if n['dow'] < 5 %}
+            {% if user.access == 'A' or user.access == 'B' %}
+                <td><a href ='/calendar_edit/{{ data.card_number}}/{{ data.year }}/{{ data.mounth }}/{{n['day']}}'>Edit</a></td>
+            {% endif %}
+            {% endif %}
+        </tr>
+    </form>
+    {% endfor %}
+    <tr><td>Celkem naroku na stravenku</td><td></td><td></td><td>{{data.stravenka}}</td></tr>
+
+<table>
+{% endblock %}

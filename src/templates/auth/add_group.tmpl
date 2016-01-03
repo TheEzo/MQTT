@@ -1,0 +1,15 @@
+{% from "macros/fields.tmpl" import  render_input_field, render_password_field, render_checkbox_field, render_submit %}
+{% extends "shared/layout.tmpl" %}
+
+{% block title %}Přidání přístupové skupiny{% endblock %}
+
+{% block content %}
+  <h3>Přidání skupiny</h3>
+  <form method="POST" id="group-form">
+    {{ form.hidden_tag() }}
+    {{ render_input_field(form.group_name) }}
+    {{ render_input_field(form.access_time_from) }}
+    {{ render_input_field(form.access_time_to) }}
+    {{ render_submit() }}
+  </form>
+{% endblock %}

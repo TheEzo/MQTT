@@ -1,0 +1,31 @@
+{% extends "shared/layout.tmpl" %}
+
+{% block content %}
+    <style>
+        td {width: 200px;}
+    </style>
+    <table class="tftable">
+        <thead>
+            <tr>
+                <td>Jméno uživatele &nbsp;</td>
+                <td>Jméno skupiny &nbsp;</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in range(data|length) %}
+            <tr>
+                <td>{{ data[i][1] }} {{ data[i][2] }}</td>
+                <td>{{ data[i][3] }}</td>
+                <td><a href="/userGroup_del/{{ data[i][0] }}">Vymaž</a></td>
+
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+
+
+
+{% endblock %}

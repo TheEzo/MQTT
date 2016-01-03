@@ -1,0 +1,23 @@
+{% from "macros/fields.tmpl" import render_input_field, render_password_field, render_checkbox_field, render_submit %}
+{% extends "shared/layout.tmpl" %}
+{% block title %}Dostupné měsíce{% endblock %}
+
+{% block content %}
+<style type="text/css">
+.tftable {font-size:12px;color:#333333;width:100%;border-width: 1px;border-color: #729ea5;border-collapse: collapse;}
+.tftable th {font-size:12px;background-color:#acc8cc;border-width: 1px;padding: 8px;border-style: solid;border-color: #729ea5;text-align:left;}
+.tftable tr {background-color:#ffffff;}
+.tftable td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #729ea5;}
+.tftable tr:hover {background-color:#ffff99;}
+</style>
+
+<table class="tftable" border="1">
+<tr><td>Device name</td><td>Hash</td></tr>
+{% for mesic in form %}
+        <tr>
+            <td><a>{{mesic.date}}</a></td><td><a>{{mesic.Min}}</a></td><td><a>{{mesic.Max}}</a></td><td>
+            <a>{{mesic.Rozdil}}</a></td>
+        </tr>
+    {% endfor %}
+    <table>
+{% endblock %}

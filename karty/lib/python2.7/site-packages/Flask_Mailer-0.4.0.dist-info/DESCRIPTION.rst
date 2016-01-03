@@ -1,0 +1,15 @@
+Flask-Mailer
+============
+
+A Flask extension for sending email messages with pluggable backends
+and pythonic API.
+
+Contributing
+------------
+
+Don't hesitate to create a `GitHub issue
+<https://github.com/vitalk/flask-mailer/issues>`_ for any **bug** or
+**suggestion**.
+
+
+

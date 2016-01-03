@@ -1,0 +1,59 @@
+{% extends "shared/layout.tmpl" %}
+
+{% block content %}
+
+<table id="example" class="display table table-striped" cellspacing="0" width="100%">
+<thead>
+<tr>
+<th>Day</th>
+<th>Prichod</th>
+    <th>Odchod</th>
+<th>Card_Number</th>
+</tr>
+</thead>
+    <button id="button">Click Me!</button>
+</table>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.datatables.net/plug-ins/725b2a2115b/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function() {
+var table=$('#example').dataTable( {
+    "processing": true,
+    "serverSide": true,
+    'pageLength': -1,
+    "sDom": 'rt', // hide li and other element
+    "ajax": "/calendar/111/2014/2",
+    "fnRowCallback": function( nRow, data, iDisplayIndex ) {
+            $('td:eq(3)', nRow).html('<a href="delete_record/' + data.card_number + '">' +
+                data.card_number + '</a>');
+            return nRow;
+        },
+
+"columns": [
+    { "data": "day" },
+    { "data": "startdate" },
+    { "data": "enddate" },
+    { "data": "card_number" },
+]
+
+} );
+    $('button').click( function() {
+        //var data = table.$('input').serialize();
+        var data = $('#example').dataTable.columns.serialize()
+
+
+        alert(
+            "The following data would have been submitted to the server: \n\n"+
+            data+'...'
+        );
+        return false;
+    } );
+} );
+</script>
+{% endblock %}

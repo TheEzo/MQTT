@@ -1,0 +1,28 @@
+{% extends "shared/layout.tmpl" %}
+
+{% block content %}
+
+    <table class="tftable" border="1">
+        <thead>
+            <tr>
+                <td>Budova</td>
+                <td>Přístup od</td>
+                <td>Přístup do</td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for zaznam in data %}
+            <tr>
+                <td>{{ zaznam[0] }}</td>
+                <td>{{ zaznam[1] }}</td>
+                <td>{{ zaznam[2] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+
+
+
+{% endblock %}

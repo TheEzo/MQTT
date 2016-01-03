@@ -1,0 +1,18 @@
+{% from "macros/fields.tmpl" import render_input_field, render_password_field,
+                                    render_submit %}
+{% extends "shared/layout.tmpl" %}
+
+{% block title %}Nahrani souboru{% endblock %}
+
+{% block content %}
+
+<form method="POST" enctype="multipart/form-data">
+
+        {{ form.hidden_tag() }}
+            <p>
+            {{ form.filename }}
+            </p>
+    {{ render_submit() }}
+</form>
+{% endblock %}
+

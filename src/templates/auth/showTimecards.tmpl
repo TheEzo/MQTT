@@ -1,0 +1,28 @@
+{% extends "shared/layout.tmpl" %}
+
+{% block content %}
+
+    <table class="tftable" border="1">
+        <thead>
+            <tr>
+                <td>Název čtečky &nbsp;</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for zaznam in data %}
+            <tr>
+                <td>{{ zaznam[1] }}</td>
+                <td><a href="/timecard_edit/{{ zaznam[0] }}">Editovat</a></td>
+                <td><a href="/timecard_del/{{ zaznam[0] }}">Smazat</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+
+
+
+{% endblock %}

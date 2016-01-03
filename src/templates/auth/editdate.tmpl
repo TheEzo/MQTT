@@ -1,0 +1,30 @@
+{% from "macros/fields.tmpl" import  render_input_field, render_password_field, render_checkbox_field, render_submit %}
+{% block head %}
+<link type="text/css" href="/static/css/bootstrap.min.css" />
+<script type="text/javascript" src="/static/js//jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/static/assets/prettify/prettify.js" rel="stylesheet"></script>
+<script type="text/javascript" src="/static/js/bootstrap.js"></script>
+<link type="text/css" href="/static/css/clockface.css" rel="stylesheet" />
+<script type="text/javascript" src="/static/js/clockface.js"></script>
+{% endblock %}
+{% extends "shared/layout.tmpl" %}
+
+{% block title %}Oprava datumu{% endblock %}
+
+{% block content %}
+
+
+  <h3>Oprava datumu {{form.den}} od karty {{form.card_number}}</h3>
+  <form method="POST" id='editdate-form'>
+    {{ form.hidden_tag() }}
+    {{ render_input_field(form.startdate) }}
+    {{ render_input_field(form.enddate) }}
+    {{ render_submit() }}
+  </form>
+
+         <script type="text/javascript">
+                $('#startdate').clockface();
+                $('#enddate').clockface();
+           </script>
+
+{% endblock %}

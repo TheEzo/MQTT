@@ -1,0 +1,14 @@
+{% from "macros/fields.tmpl" import render_input_field, render_password_field, render_input_choice,
+                                    render_submit %}
+{% extends "shared/layout.tmpl" %}
+
+{% block title %}Reset mesice{% endblock %}
+
+{% block content %}
+  <h3>Vyber Měsíc</h3>
+  <form method="POST" id="register-form">
+    {{ form.hidden_tag() }}
+    {{ form.month }}
+    {{ render_submit() }}
+  </form>
+{% endblock %}
