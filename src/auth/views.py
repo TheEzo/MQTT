@@ -719,13 +719,40 @@ def show_userGroups():
 @blueprint.route('/pristupy', methods=['GET', 'POST'])
 @login_required
 def pristupy():
-    return "seznam pristupu daneho uzivatele"
+    carddata = Card.getAllByUserId(current_user.id)
+    data = []
+    pom = ()
+    for i in range(len(carddata)):
+        timecard_name = Timecard.getName(carddata[i][1])
+        if carddata[i][2] == "0":
+            pom = (carddata[i][0], timecard_name[0], "Ne")
+        else:
+            pom = (carddata[i][0], timecard_name[0], "Ano")
+        data.append(pom)
+    return render_template("auth/pristupy.tmpl", data=data, user=current_user)
 
 
 @blueprint.route('/vsechny_pristupy', methods=['GET', 'POST'])
 @login_required
 def pristupy_all():
-    return "seznam pristupu vsech uzivatelu s filtrem"
+    carddata = Card.getAll()
+    data = []
+    pom = ()
+    for i in range(len(carddata)):
+        timecard_name = Timecard.getName(carddata[i][2])
+        if carddata[i][3] == 0:
+            user = "Neznamy"
+        else:
+            userPom = User.findUserById(carddata[i][3])
+            user = str(userPom[0][1]) + " " + str(userPom[0][2])
+
+        if carddata[i][4] == "0":
+            pom = (carddata[i][0], carddata[i][1], timecard_name[0], user, "Ne")
+        else:
+            pom = (carddata[i][0], carddata[i][1], timecard_name[0], user, "Ano")
+        data.append(pom)
+    print data
+    return render_template("auth/pristupy_all.tmpl", data=data, user=current_user)
 
 
 @blueprint.route('/skupiny', methods=['GET', 'POST'])
@@ -737,7 +764,7 @@ def skupiny():
     pom2 = []
     for i in range(len(in_groups)):
         timecard_id = Group_has_timecard.findTimecard(in_groups[i][0])
-
+        print i
         time_from = Group.getTimeFrom(in_groups[i][0])
         time_to = Group.getTimeTo(in_groups[i][0])
 

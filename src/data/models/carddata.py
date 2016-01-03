@@ -42,3 +42,11 @@ class Card(CRUDModel):
             if n.rozdil >= 3:
                 narok = narok + 1
         return narok
+
+    @staticmethod
+    def getAllByUserId(id):
+        return db.session.query(Card.time, Card.id_card_reader, Card.access).filter_by(id_user=id).all()
+
+    @staticmethod
+    def getAll():
+        return db.session.query(Card.chip_number, Card.time, Card.id_card_reader, Card.id_user, Card.access).all()

@@ -86,3 +86,7 @@ class User(CRUDModel, UserMixin):
     @staticmethod
     def user_in_group():
         return db.session.query(User.id, User.name, User.second_name, User_has_group.group_id).join(User.group).all()
+
+    @staticmethod
+    def oneUserById(id):
+        return db.session.query(User.name, User.second_name).filter_by(id=id).all()
