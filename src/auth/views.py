@@ -176,13 +176,13 @@ def mesicni_vypis_vyber():
 @blueprint.route('/sestava_vsichni/<string:mesic>', methods=['GET'])
 @login_required
 def sestava_vsichni(mesic):
-    form = db.session.query(User.card_number.label('card_number'), User.full_name.label('fullname'),
+    form = db.session.query(User.card_number.label('card_number'), User.second_name.label('fullname'),
                             func.DATE_FORMAT(Card.time, '%Y-%m').label("time"), \
                             func.DATE_FORMAT(Card.time, '%Y').label("year"),
                             func.DATE_FORMAT(Card.time, '%m').label("month")). \
-        join(Card, User.card_number == Card.card_number).group_by(func.DATE_FORMAT(Card.time, '%Y-%m'), User.full_name). \
+        join(Card, User.card_number == Card.card_number).group_by(func.DATE_FORMAT(Card.time, '%Y-%m'), User.second_name). \
         filter(func.DATE_FORMAT(Card.time, '%Y-%m') == mesic). \
-        order_by(User.full_name).all()
+        order_by(User.second_name).all()
     poledat = []
     for u in form:
         prom = pole_calendar(int(u[0]), int(u[3]), int(u[4]))
@@ -203,13 +203,13 @@ def vypisy_vsichni(mesic):
     #    join(Card,User.card_number==Card.card_number).group_by(func.strftime('%Y-%m', Card.time),User.full_name).\
     #    filter(func.strftime('%Y-%m', Card.time) == mesic).\
     #    order_by(User.full_name).all()
-    form = db.session.query(User.card_number.label('card_number'), User.full_name.label('fullname'),
+    form = db.session.query(User.card_number.label('card_number'), User.second_name.label('fullname'),
                             func.DATE_FORMAT(Card.time, '%Y-%m').label("time"), \
                             func.DATE_FORMAT(Card.time, '%Y').label("year"),
                             func.DATE_FORMAT(Card.time, '%m').label("month")). \
-        join(Card, User.card_number == Card.card_number).group_by(func.DATE_FORMAT(Card.time, '%Y-%m'), User.full_name). \
+        join(Card, User.card_number == Card.card_number).group_by(func.DATE_FORMAT(Card.time, '%Y-%m'), User.second_name). \
         filter(func.DATE_FORMAT(Card.time, '%Y-%m') == mesic). \
-        order_by(User.full_name).all()
+        order_by(User.second_name).all()
 
     # form = db.session.query( User.card_number.label('card_number'),User.full_name.label('fullname'),func.strftime('%Y-%m', Card.time).label("time"),\
     #                         func.strftime('%Y', Card.time).label("year"),func.strftime('%m', Card.time).label("month"),\
@@ -468,7 +468,7 @@ def timecard_edit(id):
     if form.validate_on_submit():
         timecard.update(**form.data)
         flash("Saved successfully", "info")
-        return redirect(request.args.get('next') or url_for('auth.timecards'))
+        return redirect(request.args.get('next') or url_for('auth.show_timecards'))
     return render_template("auth/add_timecard.tmpl", form=form, user=current_user)
 
 
@@ -676,7 +676,6 @@ def addToGroup():
     form.select_group.choices = in_group
     form.select_user.choices = no_group
     #fill end
-
     if form.is_submitted():
         group_id = form.data['groups']
         select_user = form.data['select_user']
@@ -751,8 +750,23 @@ def pristupy_all():
         else:
             pom = (carddata[i][0], carddata[i][1], timecard_name[0], user, "Ano")
         data.append(pom)
-    print data
+    data = sorted(data, key=lambda zaznam: zaznam[3])   #########################################################################################################
     return render_template("auth/pristupy_all.tmpl", data=data, user=current_user)
+
+@blueprint.route('/new_user/<string:chip>', methods=['GET', 'POST'])
+@login_required
+def new_user(chip):
+    if current_user.access <> 'A':
+            flash("Remove not allowed", "info")
+            return redirect(request.args.get('next') or url_for('auth.show_userGroups'))
+    form = EditUserForm()
+    form.chip_number.data = chip
+    if form.validate_on_submit():
+        User.create(**form.data)
+        flash("User added successfully", "info")
+        return redirect(request.args.get('next') or url_for('auth.user_list'))
+    return render_template("auth/editAccountAdmin.tmpl", form=form, user=current_user)
+
 
 
 @blueprint.route('/skupiny', methods=['GET', 'POST'])
@@ -764,11 +778,11 @@ def skupiny():
     pom2 = []
     for i in range(len(in_groups)):
         timecard_id = Group_has_timecard.findTimecard(in_groups[i][0])
-        print i
         time_from = Group.getTimeFrom(in_groups[i][0])
         time_to = Group.getTimeTo(in_groups[i][0])
-
         for j in range(len(timecard_id)):
+            if timecard_id[j] is None:
+                print "nic"
             jmeno = Timecard.getName(timecard_id[j][0])
             pom = (jmeno[0], time_from, time_to)
 
@@ -779,17 +793,15 @@ def skupiny():
                         boolean = False
                         if pom[1] < data[k][1]:
                             print str(pom[1]) +">"+ str(data[k][1])
-                            #data[k][1] = pom[1]
+                            data[k][1].append(pom[1])
                         if pom[2] > data[k][2]:
                             print str(pom[2]) +">"+ str(data[k][2])
-                            #data[k][2] = pom[2]
+                            data[k][2].append(pom[2])
                     if boolean:
                         data.append(pom)
             else:
                 data.append(pom)
 
-
-    print data
     return render_template("auth/user_skupiny.tmpl", data=data, user=current_user)
 
 """for k in range(len(pom_jmeno)):

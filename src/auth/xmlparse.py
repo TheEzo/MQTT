@@ -30,7 +30,7 @@ def mujxmlparse(data):
 
     result = {}
     for i in mydata:
-        i=Card(card_number=i[1],time=datetime.strptime(i[0], "%Y-%m-%d %H:%M:%S"))
+        i=Card(card_number=i[1],time=datetime.strptime(i[0], "%Y-%m-%d %H:%M:%S"), chip_number="", id_card_reader=0, id_user=0, access=False)
         db.session.add(i)
     db.session.commit()
 

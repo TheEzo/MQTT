@@ -36,39 +36,39 @@
                 $('#select_group option').prop('selected', true);
                 $('#select_user option').prop('selected', true);
             });
+
+        });
+        $( "#skupiny" ).click(function() {
+          $( "#groups" ).submit();
         });
     </script>
     <style>
-        select
+
     </style>
     <form method="POST">
      {{ form.hidden_tag() }}
         <table>
-            <thead>
-                <tr>
-                    <td>Uživatelé</td>
-                    <td></td>
-                    <td>{{ render_input_choice(form.groups(attrs={'onchange': 'actionform.submit();'})) }}</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="levy">
+            <tr>
+                <td>Uživatelé</td>
+                <td></td>
+                <td>{{ render_input_choice(form.groups()) }}<input type="button" id="skupiny" value="Zaznamenat skupiny"></td>
+            </tr>
 
-                            {{ render_input_choice(form.select_user(size=20)) }}
+            <tr>
+                <td class="levy">
 
+                        {{ render_input_choice(form.select_user(size=20)) }}
 
-                    </td>
-                    <td class="stred">
-                        <input type="button" onclick="" id="add" value=">"><br>
-                        <input type="button" id="remove" value="<">
-                    </td>
-                    <td class="pravy">
-                            {{ render_input_choice(form.select_group(size=20)) }}
+                </td>
+                <td class="stred">
+                    <input type="button" onclick="" id="add" value=">"><br>
+                    <input type="button" id="remove" value="<">
+                </td>
+                <td class="pravy">
+                        {{ render_input_choice(form.select_group(size=20)) }}
 
-                    </td>
-                </tr>
-            </tbody>
+                </td>
+            </tr>
         </table>
         <input type="submit" id="select_all" class="btn btn-info" value="Odeslat">
     </form>
