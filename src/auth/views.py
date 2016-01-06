@@ -511,6 +511,9 @@ def group_del(id):
     userGroups = db.session.query(User_has_group).filter_by(group_id=id).all()
     for o in userGroups:
         db.session.delete(o)
+    timecardGroup = db.session.query(Group_has_timecard).filter_by(group_id=id).all()
+    for o in timecardGroup:
+        db.session.delete(o)
     db.session.delete(group)
     db.session.commit()
     flash("Group removed", "info")
