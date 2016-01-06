@@ -166,4 +166,6 @@ class TimecardInsertForm(Form):
 class AddUserToGroupForm(Form):
     select_user = SelectMultipleField(choices=[])
     select_group = SelectMultipleField(choices=[])
+
+class GroupForm(Form):
     groups = SelectField(choices=[])

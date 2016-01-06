@@ -7,7 +7,7 @@ from sqlalchemy import func, asc, Date, cast, extract
 from sqlalchemy.types import DateTime
 from .forms import ResetPasswordForm, EmailForm, LoginForm, RegistrationForm, EditUserForm, username_is_available, \
     email_is_available, Editdate, GroupInsertForm, TimecardInsertForm, AddUserToGroupForm, \
-    MonthInsert, FileUploadForm
+    MonthInsert, FileUploadForm, GroupForm
 from ..data.database import db
 from ..data.models import User, UserPasswordToken, Card, User_has_group, Group, Group_has_timecard, Timecard
 from ..data.util import generate_random_token
@@ -532,13 +532,13 @@ def group_edit(id):
     return render_template("auth/add_group.tmpl", form=form, user=current_user)
 
 
-@blueprint.route('/userGroup_del/<int:id>', methods=['GET', 'POST'])
+@blueprint.route('/userGroup_del/<int:id_uzivatele>/<int:id_skupiny>', methods=['GET', 'POST'])
 @login_required
-def userGroup_del(id):
+def userGroup_del(id_uzivatele, id_skupiny):
     if current_user.access <> 'A':
         flash("Remove not allowed", "info")
         return redirect(request.args.get('next') or url_for('auth.show_userGroups'))
-    userGroups = db.session.query(User_has_group).filter_by(user_id=id).all()
+    userGroups = db.session.query(User_has_group).filter_by(user_id=id_uzivatele, group_id=id_skupiny).all()
     for o in userGroups:
         db.session.delete(o)
     db.session.commit()
@@ -647,13 +647,41 @@ def show_timecards():
     return render_template("auth/showTimecards.tmpl", data=zaznamy, user=current_user)
 
 
+@blueprint.route('/groupUsers', methods=['GET', 'POST'])
+@login_required
+def show_userGroups():
+    zaznamy = User.user_in_group()
+    data = []
+    pom2 = ()
+    for i in range(len(zaznamy)):
+        pom = Group.getGroupName(zaznamy[i][3])
+        pom2 = (zaznamy[i][0], zaznamy[i][1], zaznamy[i][2], pom, zaznamy[i][3])
+        data.append(pom2)
+    print data
+    return render_template("auth/showUserGroups.tmpl", data=data, user=current_user)
+
+
+
 @blueprint.route('/addToGroup', methods=['GET', 'POST'])
 @login_required
 def addToGroup():
-    form = AddUserToGroupForm()
-    users = User.all_users()
+    form = GroupForm()
     groups = Group.getIdName()
-    pom = User_has_group.usersInGroup()
+    form.groups.choices = groups
+    if form.is_submitted():
+        group_id = form.data['groups']
+        for i in range(len(groups)):
+            if group_id == str(groups[i][0]):
+                group_name = str(groups[i][1])
+        return redirect('addToGroup/' + group_id + '/' + group_name)
+    return render_template("auth/user_has_group.tmpl", form=form, user=current_user)
+
+@blueprint.route('/addToGroup/<int:id>/<string:name>', methods=['GET', 'POST'])
+@login_required
+def user_has_group_data(id, name):
+    users = User.all_users()
+    users_in_group = User_has_group.usersInGroup(id)
+    form = AddUserToGroupForm()
 
     #fill form
     in_group = []
@@ -661,9 +689,9 @@ def addToGroup():
     for i in range(len(users)):
         pom2 = ""
         boolean = True
-        for j in range(len(pom)):
+        for j in range(len(users_in_group)):
             if(boolean):
-                if(users[i][0] == pom[j][0]):
+                if(users[i][0] == users_in_group[j][0]):
                     pom2 = users[i][1]+" "+users[i][2]
                     pom3 = (users[i][0], pom2)
                     in_group.append(pom3)
@@ -672,18 +700,24 @@ def addToGroup():
             pom2 = str(users[i][1]) + " " + str(users[i][2])
             pom3 = (users[i][0], pom2)
             no_group.append(pom3)
-    form.groups.choices = groups
     form.select_group.choices = in_group
     form.select_user.choices = no_group
     #fill end
+
     if form.is_submitted():
-        group_id = form.data['groups']
+        group_id = id
         select_user = form.data['select_user']
         select_group = form.data['select_group']
         for i in range(len(select_user)):
             for j in range(len(in_group)):
                 if str(select_user[i]) == str(in_group[j][0]):
                     User_has_group.findToDelete(select_user[i], group_id)
+        for i in range(len(select_group)):
+            for j in range(len(no_group)):
+                if str(select_group[i]) == str(no_group[j][0]):
+                    pom2 = User_has_group(select_group[i], group_id)
+                    db.session.add(pom2)
+                    """
         for i in range(len(select_group)):
             boolean = True
             pom = User_has_group.compareUsers(select_group[i])
@@ -695,24 +729,13 @@ def addToGroup():
                 if boolean:
                     pom2 = User_has_group(select_group[i], group_id)
                     db.session.add(pom2)
+                    """
         db.session.commit()
         flash("Data zaznamenana!", "info")
         return redirect('groupUsers')
-    return render_template("auth/user_has_group.tmpl", form=form, user=current_user)
 
-@blueprint.route('/groupUsers', methods=['GET', 'POST'])
-@login_required
-def show_userGroups():
-    zaznamy = User.user_in_group()
-    data = []
-    pom2 = ()
-    for i in range(len(zaznamy)):
-        pom = Group.getGroupName(zaznamy[i][3])
-        pom2 = (zaznamy[i][0], zaznamy[i][1], zaznamy[i][2], pom)
-        data.append(pom2)
+    return render_template("auth/user_has_group_id.tmpl", form=form, user=current_user, name=name)
 
-
-    return render_template("auth/showUserGroups.tmpl", data=data, user=current_user)
 
 
 @blueprint.route('/pristupy', methods=['GET', 'POST'])

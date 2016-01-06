@@ -10,51 +10,29 @@
 {% block content %}
 
     <style>
-        table {width: 100%;}
-        .levy {width: 49%;}
-        .stred {width: 2%;}
-        .pravy {width: 49%;}
-        .center {text-align: center;}
-        #select_user {width: 100%;}
-        #select_group {width: 100%;}
-        select {background: #f4f4f4; height:30px;
-        line-height:30px;}
-        .doprava {text-align: right;}
-    </style>
-    <script type="text/javascript">
-        $().ready(function() {
-            $('#add').click(function() {
-                return !$('#select_user option:selected').remove().appendTo('#select_group');
-            });
-            $('#remove').click(function() {
-                return !$('#select_group option:selected').remove().appendTo('#select_user');
-            });
-            $('#add_all').click(function() {
-                return !$('#select_user option.value').remove().appendTo('#select');
-            })
-            $('#select_all').click( function() {
-                $('#select_group option').prop('selected', true);
-                $('#select_user option').prop('selected', true);
-            });
-
-        });
-        $( "#skupiny" ).click(function() {
-          $( "#groups" ).submit();
-        });
-    </script>
-    <style>
 
     </style>
     <form method="POST">
      {{ form.hidden_tag() }}
         <table>
             <tr>
-                <td>Uživatelé</td>
-                <td></td>
-                <td>{{ render_input_choice(form.groups()) }}<input type="button" id="skupiny" value="Zaznamenat skupiny"></td>
+                <td>Vyber skupinu:</td>
+                <td>{{ render_input_choice(form.groups()) }}</td>
             </tr>
 
-            <tr>
+
+        </table>
+        <input type="submit" id="select_all" class="btn btn-info" value="Odeslat">
+    </form>
+
+
+{% endblock %}
+
+                            <button type="button" id="remove">&lt;</button>
+                            <!--<button type="button" id="add_all">&gt;&gt;</bu
+
+
+<tr>
                 <td class="levy">
 
                         {{ render_input_choice(form.select_user(size=20)) }}
@@ -69,15 +47,5 @@
 
                 </td>
             </tr>
-        </table>
-        <input type="submit" id="select_all" class="btn btn-info" value="Odeslat">
-    </form>
-
-
-{% endblock %}
-
-                            <button type="button" id="remove">&lt;</button>
-                            <!--<button type="button" id="add_all">&gt;&gt;</bu
-
 
 

@@ -28,8 +28,8 @@ class User_has_group(CRUDModel):
         return db.session.query(User_has_group.user_id, User_has_group.group_id).all()
 
     @staticmethod
-    def usersInGroup():
-        return db.session.query(User_has_group.user_id, User_has_group.group_id).all()
+    def usersInGroup(group_id):
+        return db.session.query(User_has_group.user_id).filter_by(group_id=group_id).all()
 
     @staticmethod
     def getGroupName():
