@@ -16,7 +16,7 @@
      {{ form.hidden_tag() }}
         <table>
             <tr>
-                <td>Vyber skupinu:</td>
+                <td>Vyber skupinu:&nbsp;</td>
                 <td>{{ render_input_choice(form.groups()) }}</td>
             </tr>
 
@@ -27,25 +27,3 @@
 
 
 {% endblock %}
-
-                            <button type="button" id="remove">&lt;</button>
-                            <!--<button type="button" id="add_all">&gt;&gt;</bu
-
-
-<tr>
-                <td class="levy">
-
-                        {{ render_input_choice(form.select_user(size=20)) }}
-
-                </td>
-                <td class="stred">
-                    <input type="button" onclick="" id="add" value=">"><br>
-                    <input type="button" id="remove" value="<">
-                </td>
-                <td class="pravy">
-                        {{ render_input_choice(form.select_group(size=20)) }}
-
-                </td>
-            </tr>
-
-

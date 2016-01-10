@@ -1,8 +1,8 @@
 {% extends "shared/layout.tmpl" %}
-
+{% block title %}Skupiny{% endblock %}
 {% block content %}
 
-    <table class="tftable" border="1">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <td>Název skupiny &nbsp;</td>
@@ -18,8 +18,8 @@
                 <td>{{ zaznam[1] }}</td>
                 <td>{{ zaznam[2] }}</td>
                 <td>{{ zaznam[3] }}</td>
-                <td><a href="/group_edit/{{ zaznam[0] }}">Editovat</a></td>
-                <td><a href="/group_del/{{ zaznam[0] }}">Vymaž</a></td>
+                <td><a class="btn btn-primary" href="/group_edit/{{ zaznam[0] }}">Editovat</a></td>
+                <td><a class="btn btn-danger" href="/group_del/{{ zaznam[0] }}">Vymaž</a></td>
             </tr>
         {% endfor %}
         </tbody>

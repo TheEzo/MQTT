@@ -1,6 +1,6 @@
 {% from "macros/fields.tmpl" import render_input_field, render_password_field, render_checkbox_field, render_submit %}
 {% extends "shared/layout.tmpl" %}
-{% block title %}Výpis uživatel§{% endblock %}
+{% block title %}Výpis uživatelů{% endblock %}
 
 {% block content %}
 <h3>Výpis uzivatelů </h3>
@@ -11,19 +11,23 @@
 .tftable td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #729ea5;}
 .tftable tr:hover {background-color:#ffff99;}
 </style>
-<table class="tftable" border="1">
-<tr><td>Login</td><td>Celé jméno</td><td>Císlo karty</td><td>Císlo cipu</td><td>Akce</td><td></td></tr>
+<table class="table table-striped">
+    <thead>
+        <tr><td>Login</td><td>Celé jméno</td><td>Číslo karty</td><td>Číslo cipu</td><td></td><td></td></tr>
+    </thead>
+    <tbody>
     {% for n in data %}
         <tr>
             <td>{{ n.username }}</td>
-            <td>{{ n.name }} {{ n.second_name }}</td>
+            <td>{{ n.second_name }} {{ n.name }}</td>
             <td>{{ n.card_number }}</td>
             <td>{{ n.chip_number }}</td>
-            <td><a href ='/user_edit/{{ n.id}}'>Oprav</a></td>
-            <td><a href ='/user_del/{{ n.id}}'>Vymaž</a></td>
+            <td><a class="btn btn-primary" href ='/user_edit/{{ n.id}}'>Editovat</a></td>
+            <td><a class="btn btn-danger" href ='/user_del/{{ n.id}}'>Vymazat</a></td>
         </tr>
     </form>
     {% endfor %}
+    </tbody>
 </table>
-    <td><a href ='/user_add/'>Přidej uživatele</a></td>
+    <td><a class="btn btn-info" href ='/user_add/'>Přidej uživatele</a></td>
     {% endblock %}

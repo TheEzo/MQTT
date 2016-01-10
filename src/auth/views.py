@@ -7,7 +7,7 @@ from sqlalchemy import func, asc, Date, cast, extract
 from sqlalchemy.types import DateTime
 from .forms import ResetPasswordForm, EmailForm, LoginForm, RegistrationForm, EditUserForm, username_is_available, \
     email_is_available, Editdate, GroupInsertForm, TimecardInsertForm, AddUserToGroupForm, \
-    MonthInsert, FileUploadForm, GroupForm
+    MonthInsert, FileUploadForm, GroupForm, AssignTimecardForm
 from ..data.database import db
 from ..data.models import User, UserPasswordToken, Card, User_has_group, Group, Group_has_timecard, Timecard
 from ..data.util import generate_random_token
@@ -238,7 +238,7 @@ def vypisy():
         card_number=current_user.card_number).group_by(func.DATE_FORMAT(Card.time, '%Y-%m'))
     # .group_by([func.day(Card.time)])
 
-    return render_template("auth/vypisy.tmpl", form=form, data=current_user.card_number, user=current_user)
+    return render_template("auth/vypisy.tmpl", form=form, data=current_user.chip_number, user=current_user)
 
 
 @blueprint.route('/mesicni_vypis_vsichni/<string:mesic>', methods=['GET'])
@@ -328,7 +328,7 @@ def caljson_edit(card_number, year, mount):
     return jsonify(data=data)
 
 
-def pole_calendar(card_number, year, month):
+def pole_calendar(chip_number, year, month):
     lastday = last_day_of_month(year, month)
     datarow = []
     data = {}
@@ -348,7 +348,7 @@ def pole_calendar(card_number, year, month):
                                     , func.min(func.DATE_FORMAT(Card.time, '%H:%i')).label("Min") \
                                     , func.max(func.DATE_FORMAT(Card.time, '%H:%i')).label("Max")) \
                    .filter(extract('month', Card.time) == month).filter(extract('year', Card.time) == year).filter(
-        Card.card_number == card_number).group_by(func.DATE_FORMAT(Card.time, '%Y-%m-%d')))
+        Card.chip_number == chip_number).group_by(func.DATE_FORMAT(Card.time, '%Y-%m-%d')))
     # .filter(datetime(Card.time).month == mounth  ))
     for day in xrange(1, lastday):
         d = {}
@@ -389,16 +389,16 @@ def pole_calendar(card_number, year, month):
     data['lastday'] = lastday
     data['mounth'] = month
     data['year'] = year
-    data['card_number'] = card_number
+    data['chip_number'] = chip_number
     data['data'] = datarow
 
     return data
 
 
-@blueprint.route('/calendar/<int:card_number>/<int:year>/<int:month>', methods=['GET'])
+@blueprint.route('/calendar/<int:chip_number>/<int:year>/<int:month>', methods=['GET'])
 @login_required
-def calendar(card_number, year, month):
-    data = pole_calendar(card_number, year, month)
+def calendar(chip_number, year, month):
+    data = pole_calendar(chip_number, year, month)
     return render_template('auth/mesicni_vypis.tmpl', data=data, user=current_user)
 
 
@@ -660,7 +660,6 @@ def show_userGroups():
         pom = Group.getGroupName(zaznamy[i][3])
         pom2 = (zaznamy[i][0], zaznamy[i][1], zaznamy[i][2], pom, zaznamy[i][3])
         data.append(pom2)
-    print data
     return render_template("auth/showUserGroups.tmpl", data=data, user=current_user)
 
 
@@ -695,12 +694,12 @@ def user_has_group_data(id, name):
         for j in range(len(users_in_group)):
             if(boolean):
                 if(users[i][0] == users_in_group[j][0]):
-                    pom2 = users[i][1]+" "+users[i][2]
+                    pom2 = users[i][2]+" "+ users[i][1]
                     pom3 = (users[i][0], pom2)
                     in_group.append(pom3)
                     boolean = False
         if(boolean != False):
-            pom2 = str(users[i][1]) + " " + str(users[i][2])
+            pom2 = users[i][2] + " " + users[i][1]
             pom3 = (users[i][0], pom2)
             no_group.append(pom3)
     form.select_group.choices = in_group
@@ -720,19 +719,6 @@ def user_has_group_data(id, name):
                 if str(select_group[i]) == str(no_group[j][0]):
                     pom2 = User_has_group(select_group[i], group_id)
                     db.session.add(pom2)
-                    """
-        for i in range(len(select_group)):
-            boolean = True
-            pom = User_has_group.compareUsers(select_group[i])
-            if pom != []:
-                for j in range(len(pom)):
-                    if select_group[i] == pom[j][0]:
-                        boolean = False
-            else:
-                if boolean:
-                    pom2 = User_has_group(select_group[i], group_id)
-                    db.session.add(pom2)
-                    """
         db.session.commit()
         flash("Data zaznamenana!", "info")
         return redirect('groupUsers')
@@ -827,15 +813,65 @@ def skupiny():
                         data.append(pom)
             else:
                 data.append(pom)
-
     return render_template("auth/user_skupiny.tmpl", data=data, user=current_user)
 
-"""for k in range(len(pom_jmeno)):
-                boolean = True
-                if str(pom_jmeno[k][0]) == str(pom[0]):
-                    print str(pom_jmeno[k][0])+"=="+str(pom[0])
-                    boolean = False
-                if (boolean):
+@blueprint.route('/assign_timecard', methods=['GET', 'POST'])
+@login_required
+def timecardForGroup():
+    form = GroupForm()
+    groups = Group.getIdName()
+    form.groups.choices = groups
+    if form.is_submitted():
+        group_id = form.data['groups']
+        for i in range(len(groups)):
+            if group_id == str(groups[i][0]):
+                group_name = str(groups[i][1])
+        return redirect('add_timecard_to_group/' + group_id + '/' + group_name)
+    return render_template("auth/group_has_timecard.tmpl", form=form, user=current_user)
 
-                1-23
-                """
+
+@blueprint.route('/assign_timecard_to_group/<int:id>/<string:name>', methods=['GET', 'POST'])
+@login_required
+def group_has_timecard_data(id, name):
+    timecards = Timecard.getIdName()
+    group_has_timecard = Group_has_timecard.findTimecard(id)
+    form = AssignTimecardForm()
+    """
+    #fill form
+    in_group = []
+    no_group = []
+    for i in range(len(timecards)):
+        pom2 = ""
+        boolean = True
+        for j in range(len(group_has_timecard)):
+            if(boolean):
+                if(timecards[i][0] == group_has_timecard[j][0]):
+                    pom2 = timecards[i][1]+" "+timecards[i][2]
+                    pom3 = (timecards[i][0], pom2)
+                    in_group.append(pom3)
+                    boolean = False
+        if(boolean != False):
+            pom2 = str(timecards[i][1]) + " " + str(timecards[i][2])
+            pom3 = (timecards[i][0], pom2)
+            no_group.append(pom3)
+    form.select_group.choices = in_group
+    form.select_user.choices = no_group
+    #fill end
+    ""
+    if form.is_submitted():
+        group_id = id
+        select_user = form.data['select_user']
+        select_group = form.data['select_group']
+        for i in range(len(select_user)):
+            for j in range(len(in_group)):
+                if str(select_user[i]) == str(in_group[j][0]):
+                    User_has_group.findToDelete(select_user[i], group_id)
+        for i in range(len(select_group)):
+            for j in range(len(no_group)):
+                if str(select_group[i]) == str(no_group[j][0]):
+                    pom2 = Group_has_timecard(select_group[i], group_id)
+                    db.session.add(pom2)
+        flash("Data zaznamenana!", "info")
+        return redirect('groupUsers')
+        """
+    return render_template("auth/user_has_group_id.tmpl", form=form, user=current_user, name=name)

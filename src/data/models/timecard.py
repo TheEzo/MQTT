@@ -29,3 +29,7 @@ class Timecard(CRUDModel):
     @staticmethod
     def getIdAndName():
         return db.session.query(Timecard.id, Timecard.timecard_head).all()
+
+    @staticmethod
+    def getIdName():
+        return db.session.query(Timecard.id, Timecard.timecard_name).all()

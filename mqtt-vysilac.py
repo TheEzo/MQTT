@@ -8,7 +8,7 @@ KOD3 = "daaaaaaa"
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     #client.subscribe("device/+/ctecka/potvrzeni", qos=2)
-    client.publish("device/dilna/ctecka/request", payload=KOD3)
+    client.publish("device/domecek/ctecka/request", payload=KOD)
     #client.publish("device/domecek/ctecka/request", payload=KOD2)
     print "Kod odeslan"
 

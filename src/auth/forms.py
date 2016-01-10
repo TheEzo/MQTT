@@ -169,3 +169,10 @@ class AddUserToGroupForm(Form):
 
 class GroupForm(Form):
     groups = SelectField(choices=[])
+
+class TimecardForm(Form):
+    timecards = SelectField(choices=[])
+
+class AssignTimecardForm(Form):
+    select_group = SelectMultipleField(choices=[])
+    select_timecard = SelectMultipleField(choices=[])

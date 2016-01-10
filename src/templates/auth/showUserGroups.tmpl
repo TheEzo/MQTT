@@ -1,14 +1,11 @@
 {% extends "shared/layout.tmpl" %}
-
+{% block title %}Uživatelé ve skupinách{% endblock %}
 {% block content %}
-    <style>
-        td {width: 200px;}
-    </style>
-    <table class="tftable">
+    <table class="table table-striped">
         <thead>
             <tr>
-                <td>Jméno uživatele &nbsp;</td>
-                <td>Jméno skupiny &nbsp;</td>
+                <td>Jméno uživatele</td>
+                <td>Jméno skupiny</td>
                 <td></td>
             </tr>
         </thead>
@@ -17,8 +14,7 @@
             <tr>
                 <td>{{ data[i][1] }} {{ data[i][2] }}</td>
                 <td>{{ data[i][3] }}</td>
-                <td><a href="/userGroup_del/{{ data[i][0] }}/{{ data[i][4] }}">Vymaž</a></td>
-
+                <td><a class="btn btn-danger" href="/userGroup_del/{{ data[i][0] }}/{{ data[i][4] }}">Vymazat ze skupiny</a></td>
             </tr>
         {% endfor %}
         </tbody>
