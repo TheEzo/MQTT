@@ -755,14 +755,13 @@ def pristupy_all():
             user = "Neznamy"
         else:
             userPom = User.findUserById(carddata[i][3])
-            user = str(userPom[0][1]) + " " + str(userPom[0][2])
+            user = str(userPom[0][2]) + " " + str(userPom[0][1])
 
         if carddata[i][4] == "0":
             pom = (carddata[i][0], carddata[i][1], timecard_name[0], user, "Ne")
         else:
             pom = (carddata[i][0], carddata[i][1], timecard_name[0], user, "Ano")
         data.append(pom)
-    data = sorted(data, key=lambda zaznam: zaznam[3])   #########################################################################################################
     return render_template("auth/pristupy_all.tmpl", data=data, user=current_user)
 
 @blueprint.route('/new_user/<string:chip>', methods=['GET', 'POST'])
@@ -786,35 +785,55 @@ def new_user(chip):
 def skupiny():
     in_groups = User_has_group.compareUsers(current_user.id)
     data = []
+    zaznamy = []
     pom_jmeno = []
     pom2 = []
+    pom = ()
     for i in range(len(in_groups)):
         timecard_id = Group_has_timecard.findTimecard(in_groups[i][0])
         time_from = Group.getTimeFrom(in_groups[i][0])
         time_to = Group.getTimeTo(in_groups[i][0])
         for j in range(len(timecard_id)):
-            if timecard_id[j] is None:
-                print "nic"
             jmeno = Timecard.getName(timecard_id[j][0])
             pom = (jmeno[0], time_from, time_to)
+            data.append(pom)
+    for i in range(len(data)):
+        boolean = True
+        if i > 0:
+            for j in range(len(zaznamy)):
+                if boolean:
+                    if data[i][0] == zaznamy[j][0]:
+                        boolean = False
+                        if data[i][1] < zaznamy[j][1]:
+                            pom = (zaznamy[j][0], data[i][1], zaznamy[j][2])
+                            zaznamy[j] = pom
+                        if data[i][2] > zaznamy[j][2]:
+                            pom = (zaznamy[j][0], zaznamy[j][1], data[i][2])
+                            zaznamy[j] = pom
+            if boolean:
+                zaznamy.append(data[i])
+        else:
+            zaznamy.append(data[i])
+    return render_template("auth/user_skupiny.tmpl", data=zaznamy, user=current_user)
 
-            if i > 0:
+"""
+if i > 0:
                 for k in range(len(data)):
                     boolean = True
                     if str(data[k][0]) == str(jmeno[0]):
                         boolean = False
                         if pom[1] < data[k][1]:
-                            print str(pom[1]) +">"+ str(data[k][1])
+                            print str(pom[1]) +">"+ str(data[k][1])+"xxx"
                             data[k][1].append(pom[1])
+                        print str(pom[2]) +">"+ str(data[k][2])
                         if pom[2] > data[k][2]:
-                            print str(pom[2]) +">"+ str(data[k][2])
+                            print str(pom[2]) +">"+ str(data[k][2])+"xxx"
                             data[k][2].append(pom[2])
+
                     if boolean:
                         data.append(pom)
             else:
-                data.append(pom)
-    return render_template("auth/user_skupiny.tmpl", data=data, user=current_user)
-
+"""
 @blueprint.route('/assign_timecard', methods=['GET', 'POST'])
 @login_required
 def timecardForGroup():
@@ -826,52 +845,73 @@ def timecardForGroup():
         for i in range(len(groups)):
             if group_id == str(groups[i][0]):
                 group_name = str(groups[i][1])
-        return redirect('add_timecard_to_group/' + group_id + '/' + group_name)
+        return redirect('assign_timecard_to_group/' + group_id + '/' + group_name)
     return render_template("auth/group_has_timecard.tmpl", form=form, user=current_user)
 
 
 @blueprint.route('/assign_timecard_to_group/<int:id>/<string:name>', methods=['GET', 'POST'])
 @login_required
 def group_has_timecard_data(id, name):
-    timecards = Timecard.getIdName()
-    group_has_timecard = Group_has_timecard.findTimecard(id)
     form = AssignTimecardForm()
-    """
+    timecards = Timecard.getIdName()
+
+    group_has_timecard = Group_has_timecard.findTimecard(id)
+    print group_has_timecard
     #fill form
     in_group = []
     no_group = []
     for i in range(len(timecards)):
-        pom2 = ""
         boolean = True
         for j in range(len(group_has_timecard)):
             if(boolean):
                 if(timecards[i][0] == group_has_timecard[j][0]):
-                    pom2 = timecards[i][1]+" "+timecards[i][2]
-                    pom3 = (timecards[i][0], pom2)
-                    in_group.append(pom3)
+                    pom2 = (timecards[i][0], timecards[i][1])
+                    in_group.append(pom2)
                     boolean = False
         if(boolean != False):
-            pom2 = str(timecards[i][1]) + " " + str(timecards[i][2])
-            pom3 = (timecards[i][0], pom2)
-            no_group.append(pom3)
+            pom2 = (timecards[i][0], timecards[i][1])
+            no_group.append(pom2)
+    in_group = sorted(in_group, key=lambda in_group: in_group)
     form.select_group.choices = in_group
-    form.select_user.choices = no_group
+    form.select_timecard.choices = no_group
     #fill end
-    ""
+
     if form.is_submitted():
         group_id = id
-        select_user = form.data['select_user']
+        select_timecard = form.data['select_timecard']
         select_group = form.data['select_group']
-        for i in range(len(select_user)):
+        for i in range(len(select_timecard)):
             for j in range(len(in_group)):
-                if str(select_user[i]) == str(in_group[j][0]):
-                    User_has_group.findToDelete(select_user[i], group_id)
+                if str(select_timecard[i]) == str(in_group[j][0]):
+                    Group_has_timecard.findToDelete(select_timecard[i], group_id)
         for i in range(len(select_group)):
             for j in range(len(no_group)):
                 if str(select_group[i]) == str(no_group[j][0]):
-                    pom2 = Group_has_timecard(select_group[i], group_id)
+                    pom2 = Group_has_timecard(timecard_id=select_group[i], group_id=group_id)
                     db.session.add(pom2)
+        db.session.commit()
         flash("Data zaznamenana!", "info")
-        return redirect('groupUsers')
-        """
-    return render_template("auth/user_has_group_id.tmpl", form=form, user=current_user, name=name)
+        return redirect('groupTimecards')
+    return render_template("auth/group_has_timecard_id.tmpl", form=form, user=current_user, name=name)
+
+
+@blueprint.route('/groupTimecards', methods=['GET', 'POST'])
+@login_required
+def groupTimecards():
+    zaznamy = Group_has_timecard.timecard_in_group()
+    data = []
+    pom2 = ()
+    for i in range(len(zaznamy)):
+        pom = Group.getGroupName(zaznamy[i][1])
+        pom2 = (zaznamy[i][0], pom, zaznamy[i][3])
+        data.append(pom2)
+    return render_template("auth/group_has_timecard_vypis.tmpl", data=data, user=current_user)
+
+
+@blueprint.route('/groupTimecard_del/<int:id>', methods=['GET', 'POST'])
+@login_required
+def group_has_timecard_del(id):
+    db.session.query(Group_has_timecard).filter_by(id=id).delete()
+    db.session.commit()
+    flash("Zaznam odstranen", "info")
+    return redirect(request.args.get('next') or url_for('auth.groupTimecards'))

@@ -1,0 +1,36 @@
+{% extends "shared/layout.tmpl" %}
+{% block title %}Všechny přistupy{% endblock %}
+{% block content %}
+
+    <table class="table table-striped" id="tablesorter-demo">
+        <thead>
+            <tr>
+                <th>Uživatel</th>
+                <th>Čtečka</th>
+                <th>Datum a čas</th>
+                <th>Čip</th>
+                <th>Vpuštěn</th>
+                <th>Přidat</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for zaznam in data %}
+            <tr>
+                <td>{{ zaznam[3] }}&nbsp;&nbsp;</td>
+                <td>{{ zaznam[2] }}&nbsp;&nbsp;</td>
+                <td>{{ zaznam[1] }}&nbsp;&nbsp;</td>
+                <td>{{ zaznam[0] }}&nbsp;&nbsp;</td>
+                <td>{{ zaznam[4] }}&nbsp;&nbsp;</td>
+                <td>{% if zaznam[3] == "Neznamy" %}<a class="btn btn-primary" href="/new_user/{{ zaznam[0] }}">Přidat</a>
+                {% else %}
+                {% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
+
+
+
+{% endblock %}

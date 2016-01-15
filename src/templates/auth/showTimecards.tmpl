@@ -2,18 +2,20 @@
 {% block title %}Čtečky{% endblock %}
 {% block content %}
 
-    <table class="table table-striped">
+    <table class="table table-striped" id="tablesorter-demo">
         <thead>
             <tr>
-                <td>Název čtečky &nbsp;</td>
-                <td></td>
-                <td></td>
+                <th>Název čtečky &nbsp;</th>
+                <th>Hlavička v URL</th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
         {% for zaznam in data %}
             <tr>
                 <td>{{ zaznam[1] }}</td>
+                <td>{{ zaznam[2] }}</td>
                 <td><a class="btn btn-primary" href="/timecard_edit/{{ zaznam[0] }}">Editovat</a></td>
                 <td><a class="btn btn-danger" href="/timecard_del/{{ zaznam[0] }}">Smazat</a></td>
             </tr>

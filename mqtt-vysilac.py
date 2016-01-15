@@ -3,12 +3,12 @@ import sys
 
 KOD = "005d88b5"
 KOD2 = "00ab00ba"
-KOD3 = "daaaaaaa"
+KOD3 = "xxxxxxx"
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     #client.subscribe("device/+/ctecka/potvrzeni", qos=2)
-    client.publish("device/domecek/ctecka/request", payload=KOD)
+    client.publish("device/domecek/ctecka/request", payload=KOD3)
     #client.publish("device/domecek/ctecka/request", payload=KOD2)
     print "Kod odeslan"
 

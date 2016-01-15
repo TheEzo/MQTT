@@ -13,11 +13,13 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
+      <ul class="nav navbar-nav navbar-right">
         {% if current_user.is_anonymous() %}
           <li><a href="{{ url_for('auth.login') }}">Login</a></li>
           <li><a href="{{ url_for('auth.register') }}">Sign up</a></li>
         {% else %}
+      </ul>
+      <ul class="nav navbar-nav">
             {% if user.access == "A" or user.access == "B" %}
                 <li <!--class="active"--><a href="{{ url_for('auth.upload') }}">Nahrát xml</a></li>
                 <li><a href="{{ url_for('auth.newmonth') }}">Vytvoř měsíc</a></li>
@@ -41,6 +43,7 @@
                   <li><a href="{{ url_for('auth.show_groups') }}">Skupiny</a></li>
                   <li><a href="{{ url_for('auth.show_timecards') }}">Čtečky</a></li>
                   <li><a href="{{ url_for('auth.show_userGroups') }}">Uživatele ve skupinách</a></li>
+                  <li><a href="{{ url_for('auth.groupTimecards') }}">Přístup k čtečkám</a></li>
                   <li role="separator" class="divider"></li>
                   <li><a href="{{ url_for('auth.user_list') }}">List uživatelů</a></li>
                   <li><a href="{{ url_for('auth.mesicni_vypis_vyber') }}">Vypisy uživatelů</a></li>

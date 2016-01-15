@@ -7,6 +7,10 @@
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/npm.js"></script>
     <script src="/static/js/jquery.min.js"></script>
+
+    <script type="text/javascript" src="/static/js/jquery.tablesorter.js"></script>
+    <script type="text/javascript" src="/static/js/chili-1.8b.js"></script>
+
   {% endassets %}
 {% endmacro %}
 
@@ -23,6 +27,15 @@
     {% endblock %}
   </head>
   <body>
+    <script type="text/javascript">
+        $(function() {
+            $("#tablesorter-demo").tablesorter({sortList:[[0,0],[2,1]], widgets: ['zebra']});
+            $("#options").tablesorter({sortList: [[0,0]], headers: { 3:{sorter: false}, 4:{sorter: false}}});
+        });
+        $(document).ready(function(){
+            $( "#nepruhledny" ).delay( 2000 ).slideUp( 300 );
+        });
+	</script>
     {% include "shared/_navbar.tmpl" %}
     <div class="container">
       {% include "shared/flash.tmpl" %}

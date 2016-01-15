@@ -27,8 +27,6 @@ def find(topic, hledat):   #stringy se nesmi jmenovat podobne
     else:
         return True
 
-
-
 def can_access(user, topic, chip):
     now = datetime.now().time()
     pom = False
@@ -37,6 +35,7 @@ def can_access(user, topic, chip):
         timecardInGroup = db.session.query(Group_has_timecard.timecard_id).filter_by(group_id=i[0]).all()
         for j in timecardInGroup:
             timecardName = db.session.query(Timecard.timecard_head).filter_by(id=j[0]).scalar()
+            timecardName = "device/" + timecardName + "/ctecka"
             if(find(topic, timecardName)):
                 timecardId = j[0]
                 pom = True
@@ -57,8 +56,6 @@ def can_access(user, topic, chip):
                 db.session.add(card)
     db.session.commit()
     return pom
-
-
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))

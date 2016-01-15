@@ -33,3 +33,4 @@ class Timecard(CRUDModel):
     @staticmethod
     def getIdName():
         return db.session.query(Timecard.id, Timecard.timecard_name).all()
+

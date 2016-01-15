@@ -4,17 +4,17 @@
     <table class="table table-striped" id="tablesorter-demo">
         <thead>
             <tr>
-                <th>Jméno uživatele</th>
                 <th>Jméno skupiny</th>
+                <th>Jméno čtečky</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
         {% for i in range(data|length) %}
             <tr>
-                <td>{{ data[i][1] }} {{ data[i][2] }}</td>
-                <td>{{ data[i][3] }}</td>
-                <td><a class="btn btn-danger" href="/userGroup_del/{{ data[i][0] }}/{{ data[i][4] }}">Vymazat ze skupiny</a></td>
+                <td>{{ data[i][1] }}</td>
+                <td>{{ data[i][2] }}</td>
+                <td><a class="btn btn-danger" href="/groupTimecard_del/{{ data[i][0] }}">Vymazat přístup</a></td>
             </tr>
         {% endfor %}
         </tbody>

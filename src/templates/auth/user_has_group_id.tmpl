@@ -1,0 +1,102 @@
+{% from "macros/fields.tmpl" import  render_input_field, render_password_field, render_checkbox_field,render_input_choice, render_submit %}
+{% extends "shared/layout.tmpl" %}
+
+{% block title %}Přidání uživatele do skupiny{% endblock %}
+{% block styles %}
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/bootstrap-transfer.js"></script>
+	<link href="/static/css/bootstrap-transfer.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+
+    <style>
+        table {width: 100%;}
+        .levy {width: 49%;}
+        .stred {width: 2%;}
+        .pravy {width: 49%;}
+        .center {text-align: center;}
+        #select_user {width: 100%;}
+        #select_group {width: 100%;}
+        select {background: #f4f4f4; height:30px;
+        line-height:30px;}
+        .doprava {text-align: right;}
+    </style>
+    <script type="text/javascript">
+        $().ready(function() {
+            $('#add').click(function() {
+                return !$('#select_user option:selected').remove().appendTo('#select_group');
+            });
+            $('#remove').click(function() {
+                return !$('#select_group option:selected').remove().appendTo('#select_user');
+            });
+            $('#add_all').click(function() {
+                $('#select_user option').prop('selected', true);
+                return !$('#select_user option:selected').remove().appendTo('#select_group');
+            });
+            $('#remove_all').click(function() {
+                $('#select_group option').prop('selected', true);
+                return !$('#select_group option:selected').remove().appendTo('#select_user');
+            });
+            $('#select_all').click( function() {
+                $('#select_group option').prop('selected', true);
+                $('#select_user option').prop('selected', true);
+            });
+
+        });
+    </script>
+    <style>
+
+    </style>
+    <form method="POST">
+     {{ form.hidden_tag() }}
+        <table>
+            <tr>
+                <td>Uživatelé</td>
+                <td></td>
+                <td>Skupina: {{ name }}</td>
+            </tr>
+            <tr>
+                <td class="levy">
+
+                        {{ render_input_choice(form.select_user(size=20)) }}
+
+                </td>
+                <td class="stred">
+                    <input type="button" onclick="" id="add" value="&gt;"><br>
+                    <input type="button" id="remove" value="&lt;"><br>
+                    <input type="button" id="add_all" value="&raquo;"><br>
+                    <input type="button" id="remove_all" value="&laquo;">
+                </td>
+                <td class="pravy">
+                        {{ render_input_choice(form.select_group(size=20)) }}
+                </td>
+            </tr>
+
+        </table>
+        <input type="submit" id="select_all" class="btn btn-info" value="Odeslat">
+    </form>
+
+
+{% endblock %}
+
+                            <button type="button" id="remove">&lt;</button>
+                            <!--<button type="button" id="add_all">&gt;&gt;</bu
+
+
+<tr>
+                <td class="levy">
+
+                        {{ render_input_choice(form.select_user(size=20)) }}
+
+                </td>
+                <td class="stred">
+                    <input type="button" onclick="" id="add" value=">"><br>
+                    <input type="button" id="remove" value="<">
+                </td>
+                <td class="pravy">
+                        {{ render_input_choice(form.select_group(size=20)) }}
+
+                </td>
+            </tr>
+
+

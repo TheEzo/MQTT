@@ -1,20 +1,21 @@
 {% extends "shared/layout.tmpl" %}
-{% block title %}Moje skupiny{% endblock %}
+{% block title %}Přístupy{% endblock %}
 {% block content %}
 
     <table class="table table-striped" id="tablesorter-demo">
         <thead>
             <tr>
-                <th>Budova</th>
-                <th>Přístup od</th>
-                <th>Přístup do</th>
+                <th>Čtečka</th>
+                <th>Čas</th>
+                <th>Vpuštěn</th>
+
             </tr>
         </thead>
         <tbody>
         {% for zaznam in data %}
             <tr>
-                <td>{{ zaznam[0] }}</td>
                 <td>{{ zaznam[1] }}</td>
+                <td>{{ zaznam[0] }}</td>
                 <td>{{ zaznam[2] }}</td>
             </tr>
         {% endfor %}

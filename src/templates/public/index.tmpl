@@ -9,6 +9,6 @@
       Please verify your account by clicking the activation link sent to your email address. Click <a href="{{ url_for('auth.resend_activation_email') }}">here</a> to resend.
     </p>
   {% else %}
-      <p>Welcome home {{ current_user.username|e }}</p>
+      <p>Welcome back {{ current_user.username|e }}</p>
   {% endif %}
 {% endblock %}
